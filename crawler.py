@@ -26,7 +26,7 @@ for pageNumber in range (1, pagesToScan, 1):
 
                         for balance in jsonData['balance']:
                                 if(balance['asset_hash'] == hashToFilter):
-                                        if(float(balance['amount']) > 20000):
+                                        if(float(balance['amount']) >= 20000):
                                                 print(addressString + ' : ' + str(balance['amount']))
                                                 data.update({addressString : str(balance['amount'])})
 
