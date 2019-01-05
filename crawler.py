@@ -14,7 +14,7 @@ for pageNumber in range (1, pagesToScan, 1):
 	req = requests.get('https://neoscan.io/addresses/' + str(pageNumber), headers={'User-Agent': 'Mozilla/5.0'})
 	req.encoding = 'UTF-8'
 	soup = BeautifulSoup(req.text, 'html.parser')
-	print('Page number: ' +str(pageNumber))
+	print('Page number: ' + str(pageNumber))
 
 	for address in soup.find_all('a', attrs={'class':'large-blue-link col-4-width'}):
 		addressString = address.get_text()
