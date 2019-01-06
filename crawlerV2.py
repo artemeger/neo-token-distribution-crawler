@@ -64,7 +64,7 @@ for iterations in range(0, count, 1000):
 	skip = skip + 1000
 	limit = limit + 1000
 
-with open('balances.csv', 'w') as file:
+with open('balances2.csv', 'w') as file:
 	w = csv.writer(file)
 	w.writerows(dataDict.items())
 	
