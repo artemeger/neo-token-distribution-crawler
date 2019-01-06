@@ -27,8 +27,11 @@ for pageNumber in range (1, pagesToScan, 1):
                         for balance in jsonData['balance']:
                                 if(balance['asset_hash'] == hashToFilter):
                                         if(float(balance['amount']) >= 20000):
-                                                print(addressString + ' : ' + str(balance['amount']))
                                                 data.update({addressString : str(balance['amount'])})
+                                                if addressString not in data:
+                                                        with open("log.txt", "a") as myfile:
+                                                             myfile.write(addressString + ' : ' + str(balance['amount']))
+                                                             print(addressString + ' : ' + str(balance['amount']))
 
 with open('balances.csv', 'w') as file:
         w = csv.writer(file)
