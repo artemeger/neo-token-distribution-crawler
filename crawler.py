@@ -9,7 +9,7 @@ pagesToScan = 121000
 hashToFilter = '45d493a6f73fa5f404244a5fb8472fc014ca5885'
 data = dict()
 
-for pageNumber in range (pagesToScan):
+for pageNumber in range (1, pagesToScan, 1):
 
         req = requests.get('https://neoscan.io/addresses/' + str(pageNumber), headers={'User-Agent': 'Mozilla/5.0'})
         soup = BeautifulSoup(req.text, 'html.parser')
