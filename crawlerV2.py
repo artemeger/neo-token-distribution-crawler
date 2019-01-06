@@ -4,7 +4,7 @@ import sys
 
 count = 1861800
 skip = 0
-limit = 100
+limit = 1000
 attemptLimit = 10
 urlString = 'http://state-api.otcgo.cn/api/v1/mainnet/public/graphql'
 sessionHead = 'http://state-api.otcgo.cn'
@@ -21,14 +21,16 @@ sessionGet.head(sessionHeadGet)
 dataDict = dict()
 
 def getBalance(url, addressString, attempt):
-	reqJson = sessionGet.get(url, headers={'Referer': addressString})
+	reqJson = sessionGet.get(url, headers={'Referer': sessionHeadGet})
 	if tokenHash in reqJson.text:
 		try:
-			data = reqJson.json()
-			for balance in data['balance']:
+			dataJson = reqJson.json()
+			for balance in dataJson['balance']:
 				if balance['asset_hash'] == tokenHash and float(balance['amount'] >= stakeThreshhold):
+					if addressString not in dataDict:
+						print(addressString + ' : ' + str(balance['amount']))
 					dataDict.update({addressString : str(balance['amount'])})
-					print(addressString + ' : ' + str(balance['amount']))
+					break
 		except:
 			if attempt <= attemptLimit:
 				print('Error... will retry')
@@ -37,7 +39,7 @@ def getBalance(url, addressString, attempt):
 			else:
 				print('Attempt limit reached. Will abort.')
 
-for iterations in range(0, count, 100):
+for iterations in range(0, count, 1000):
 	print('Finished: ' + str(round((skip/count * 100) , 2)) +'%')
 	response = session.post(
 		url = urlString,
@@ -59,8 +61,8 @@ for iterations in range(0, count, 100):
 		addressString = address['address']
 		addressUrl = 'https://api.neoscan.io/api/main_net/v1/get_balance/' + addressString
 		getBalance(addressUrl, addressString, 0)
-	skip = skip + 100
-	limit = limit + 100
+	skip = skip + 1000
+	limit = limit + 1000
 
 with open('balances.csv', 'w') as file:
 	w = csv.writer(file)
