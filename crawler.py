@@ -20,7 +20,6 @@ for pageNumber in range (1, pagesToScan, 1):
                 for address in soup.find_all('a', attrs={'class':'large-blue-link col-4-width'}):
                         addressString = address.get_text()
                         reqJson = requests.get('https://api.neoscan.io/api/main_net/v1/get_balance/' + addressString, headers={'User-Agent': 'Mozilla/5.0'})
-                        time.sleep(0.5)
                         jsonData = reqJson.json()
                         for balance in jsonData['balance']:
                                 if(balance['asset_hash'] == hashToFilter):
