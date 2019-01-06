@@ -1,22 +1,20 @@
 from requests import Session
 import time
 import sys
+import csv
 
-count = 1861800
-skip = 0
-limit = 1000
 attemptLimit = 10
 urlString = 'http://state-api.otcgo.cn/api/v1/mainnet/public/graphql'
 sessionHead = 'http://state-api.otcgo.cn'
 sessionHeadGet = 'https://api.neoscan.io'
-tokenHash = '45d493a6f73fa5f404244a5fb8472fc014ca5885'
+tokenHash = 'c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b'
 stakeThreshhold = 20000
-
-session = Session()
-session.head(sessionHead)
 
 sessionGet = Session()
 sessionGet.head(sessionHeadGet)
+
+session = Session()
+session.head(sessionHead)
 
 dataDict = dict()
 
@@ -27,8 +25,7 @@ def getBalance(url, addressString, attempt):
 			dataJson = reqJson.json()
 			for balance in dataJson['balance']:
 				if balance['asset_hash'] == tokenHash and float(balance['amount'] >= stakeThreshhold):
-					if addressString not in dataDict:
-						print(addressString + ' : ' + str(balance['amount']))
+					print(addressString + ' : ' + str(balance['amount']))
 					dataDict.update({addressString : str(balance['amount'])})
 					break
 		except:
@@ -38,34 +35,43 @@ def getBalance(url, addressString, attempt):
 				getBalance(url, addressString, attempt + 1)
 			else:
 				print('Attempt limit reached. Will abort.')
+#et address count
+payloadCount = {'query':'{SystemQuery{rows {addressNum}}}'}
+responseCount = session.post(
+	url = urlString,
+	data = payloadCount,
+	headers={'Referer': urlString}
+)
+count = int(responseCount.json()['data']['SystemQuery']['rows']['addressNum'])
 
-for iterations in range(0, count, 1000):
-	print('Finished: ' + str(round((skip/count * 100) , 2)) +'%')
-	response = session.post(
-		url = urlString,
-		data={'query':
-				'{'+
-				'AddressQuery (skip:' + str(skip) +', limit:' + str(limit) +') {'+
-				'count,'+
-				'rows {'+
-				'address '+
-				'}'+
-			  '}'+
-			'}'
-		},
-		headers={
-			'Referer': urlString
-		}
-	)
-	for address in response.json()['data']['AddressQuery']['rows']:
-		addressString = address['address']
-		addressUrl = 'https://api.neoscan.io/api/main_net/v1/get_balance/' + addressString
-		getBalance(addressUrl, addressString, 0)
-	skip = skip + 1000
-	limit = limit + 1000
+#comment that in if you want a fixed count
+#count = 200
+
+print('There are ' + str(count) + ' addresses to fetch. This will take some time')
+
+#get all addresses
+payloadAddresses = {'query':'{AddressQuery (skip:1 limit:' + str(count)+'){rows {address}}}'}
+responseAddresses = session.post(
+	url = urlString,
+	data = payloadAddresses,
+	headers={'Referer': urlString}
+)
+
+row = responseAddresses.json()['data']['AddressQuery']['rows']
+
+counter = 0
+#lookup every address
+for address in row:
+	addressString = address['address']
+	addressUrl = 'https://api.neoscan.io/api/main_net/v1/get_balance/' + addressString
+	getBalance(addressUrl, addressString, 0)
+	if counter % 100 == 1:
+		print('Finished: ' + str(round((counter/count * 100) , 2)) +'%')
+	counter += 1
 
 with open('balances2.csv', 'w') as file:
 	w = csv.writer(file)
 	w.writerows(dataDict.items())
-	
+
+print('Finished: 100%')
 sys.exit()
