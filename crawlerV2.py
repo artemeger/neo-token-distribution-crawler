@@ -14,10 +14,14 @@ stakeThreshhold = 20000
 
 session = Session()
 session.head(sessionHead)
-data = dict()
 
-def getBalance(session, url, addressString, attempt):
-	reqJson = session.get(url, headers={'User-Agent': 'Mozilla/5.0'})
+sessionGet = Session()
+sessionGet.head(sessionHeadGet)
+
+dataDict = dict()
+
+def getBalance(url, addressString, attempt):
+	reqJson = sessionGet.get(url, headers={'User-Agent': 'Mozilla/5.0'})
 	if tokenHash in reqJson.text:
 		try:
 			data = reqJson.json()
@@ -30,7 +34,7 @@ def getBalance(session, url, addressString, attempt):
 				print('Error... will retry')
 				print(data)
 				time.sleep(1)
-				getBalance(session, url, addressString, attempt + 1)
+				getBalance(url, addressString, attempt + 1)
 			else:
 				print('Attempt limit reached. Will abort.')
 
@@ -53,17 +57,15 @@ for iterations in range(0, count, 100):
 			'Referer': urlString
 		}
 	)
-	sessionGet = Session()
-	sessionGet.head(sessionHeadGet)
 	for address in response.json()['data']['AddressQuery']['rows']:
 		addressString = address['address']
 		addressUrl = 'https://api.neoscan.io/api/main_net/v1/get_balance/' + addressString
-		getBalance(sessionGet, addressUrl, addressString, 0)
+		getBalance(addressUrl, addressString, 0)
 	skip = skip + 100
 	limit = limit + 100
 
 with open('balances.csv', 'w') as file:
 	w = csv.writer(file)
-	w.writerows(data.items())
+	w.writerows(dataDict.items())
 	
 sys.exit()
