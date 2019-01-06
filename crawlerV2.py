@@ -7,7 +7,7 @@ attemptLimit = 10
 urlString = 'http://state-api.otcgo.cn/api/v1/mainnet/public/graphql'
 sessionHead = 'http://state-api.otcgo.cn'
 sessionHeadGet = 'https://api.neoscan.io'
-tokenHash = 'c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b'
+tokenHash = '45d493a6f73fa5f404244a5fb8472fc014ca5885'
 stakeThreshhold = 20000
 
 sessionGet = Session()
