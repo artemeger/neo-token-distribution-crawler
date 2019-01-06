@@ -21,18 +21,17 @@ sessionGet.head(sessionHeadGet)
 dataDict = dict()
 
 def getBalance(url, addressString, attempt):
-	reqJson = sessionGet.get(url, headers={'User-Agent': 'Mozilla/5.0'})
+	reqJson = sessionGet.get(url, headers={'Referer': addressString})
 	if tokenHash in reqJson.text:
 		try:
 			data = reqJson.json()
 			for balance in data['balance']:
 				if balance['asset_hash'] == tokenHash and float(balance['amount'] >= stakeThreshhold):
-					data.update({addressString : str(balance['amount'])})
+					dataDict.update({addressString : str(balance['amount'])})
 					print(addressString + ' : ' + str(balance['amount']))
 		except:
 			if attempt <= attemptLimit:
 				print('Error... will retry')
-				print(data)
 				time.sleep(1)
 				getBalance(url, addressString, attempt + 1)
 			else:
@@ -42,13 +41,12 @@ for iterations in range(0, count, 100):
 	print('Finished: ' + str(round((skip/count * 100) , 2)) +'%')
 	response = session.post(
 		url = urlString,
-		data={
-			'query': 
-			'{'+
+		data={'query':
+				'{'+
 				'AddressQuery (skip:' + str(skip) +', limit:' + str(limit) +') {'+
 				'count,'+
 				'rows {'+
-				  ' address '+
+				'address '+
 				'}'+
 			  '}'+
 			'}'
