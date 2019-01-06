@@ -21,18 +21,15 @@ for pageNumber in range (1, pagesToScan, 1):
                         addressString = address.get_text()
                         reqJson = requests.get('https://api.neoscan.io/api/main_net/v1/get_balance/' + addressString, headers={'User-Agent': 'Mozilla/5.0'})
                         time.sleep(0.5)
-                        try:
-                                jsonData = json.loads(reqJson.text).decode('utf-8')
-                                for balance in jsonData['balance']:
-                                        if(balance['asset_hash'] == hashToFilter):
-                                                if(float(balance['amount']) >= 20000):
-                                                        data.update({addressString : str(balance['amount'])})
-                                                        if addressString not in data:
-                                                                with open("log.txt", "a") as myfile:
-                                                                     myfile.write(addressString + ' : ' + str(balance['amount']))
-                                                                     print(addressString + ' : ' + str(balance['amount']))
-                        except:
-                                print('Error getting Address: ' + addressString)
+                        jsonData = json.loads(reqJson.text).decode('utf-8')
+                        for balance in jsonData['balance']:
+                                if(balance['asset_hash'] == hashToFilter):
+                                        if(float(balance['amount']) >= 20000):
+                                                data.update({addressString : str(balance['amount'])})
+                                                if addressString not in data:
+                                                        with open("log.txt", "a") as myfile:
+                                                             myfile.write(addressString + ' : ' + str(balance['amount']))
+                                                             print(addressString + ' : ' + str(balance['amount']))
 
 with open('balances.csv', 'w') as file:
         w = csv.writer(file)
