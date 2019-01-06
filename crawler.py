@@ -12,7 +12,6 @@ data = dict()
 for pageNumber in range (1, pagesToScan, 1):
 
         req = requests.get('https://neoscan.io/addresses/' + str(pageNumber), headers={'User-Agent': 'Mozilla/5.0'})
-        req.encoding = 'UTF-8'
         soup = BeautifulSoup(req.text, 'html.parser')
 
         if(pageNumber % 10 == 0):
@@ -21,7 +20,6 @@ for pageNumber in range (1, pagesToScan, 1):
                 for address in soup.find_all('a', attrs={'class':'large-blue-link col-4-width'}):
                         addressString = address.get_text()
                         reqJson = requests.get('https://api.neoscan.io/api/main_net/v1/get_balance/' + addressString, headers={'User-Agent': 'Mozilla/5.0'})
-                        reqJson.encoding = 'UTF-8'
                         jsonData = json.loads(reqJson.text)
 
                         for balance in jsonData['balance']:
