@@ -33,7 +33,9 @@ def getBalance(url, addressString, attempt):
 			for balance in dataJson['balance']:
 				if balance['asset_hash'] == tokenHash and float(balance['amount'] >= stakeThreshhold):
 					print(addressString + ' : ' + str(balance['amount']))
-					dataDict.update({addressString : str(balance['amount'])})
+					with open('balances2.csv', 'a') as file:
+						w = csv.writer(file)
+						w.writerows({addressString : str(balance['amount'])})
 					break
 		except:
 			if attempt <= attemptLimit:
@@ -73,9 +75,6 @@ for address in row:
 	addressUrl = 'https://api.neoscan.io/api/main_net/v1/get_balance/' + addressString
 	getBalance(addressUrl, addressString, 0)
 	if counter % 100 == 1:
-		with open('balances2.csv', 'a') as file:
-			w = csv.writer(file)
-			w.writerows(dataDict.items())
 		print('Finished: ' + str(round((counter/count * 100) , 2)) +'%')
 		dataDict = dict()
 	counter += 1
