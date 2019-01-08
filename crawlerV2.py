@@ -1,6 +1,6 @@
-
 from requests import Session
 import time
+import datetime
 import sys
 import csv
 
@@ -75,7 +75,7 @@ for address in row:
 	addressUrl = 'https://api.neoscan.io/api/main_net/v1/get_balance/' + addressString
 	getBalance(addressUrl, addressString, 0)
 	if counter % 100 == 1:
-		print('Finished: ' + str(round((counter/count * 100) , 2)) +'%')
+		print('Finished: ' + str(round((counter/count * 100) , 2)) +'%' + datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
 	counter += 1
 
 print('Finished: 100%')
