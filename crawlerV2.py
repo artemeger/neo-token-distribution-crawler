@@ -76,7 +76,6 @@ for address in row:
 	getBalance(addressUrl, addressString, 0)
 	if counter % 100 == 1:
 		print('Finished: ' + str(round((counter/count * 100) , 2)) +'%')
-		dataDict = dict()
 	counter += 1
 
 print('Finished: 100%')
