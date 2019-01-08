@@ -22,8 +22,6 @@ headerDict.update({'Address' : 'Stake'})
 with open('balances2.csv', 'w') as file:
 	w = csv.writer(file)
 	w.writerows(headerDict.items())
-	
-dataDict = dict()
 
 def getBalance(url, addressString, attempt):
 	reqJson = sessionGet.get(url, headers={'Referer': sessionHeadGet})
@@ -34,8 +32,10 @@ def getBalance(url, addressString, attempt):
 				if balance['asset_hash'] == tokenHash and float(balance['amount'] >= stakeThreshhold):
 					print(addressString + ' : ' + str(balance['amount']))
 					with open('balances2.csv', 'a') as file:
+						dataDict = dict()
 						w = csv.writer(file)
-						w.writerows({addressString : str(balance['amount'])})
+						dataDict.update({addressString : str(balance['amount'])})
+						w.writerows(dataDict.items())
 					break
 		except:
 			if attempt <= attemptLimit:
