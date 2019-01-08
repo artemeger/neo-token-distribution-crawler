@@ -17,6 +17,12 @@ sessionGet.head(sessionHeadGet)
 session = Session()
 session.head(sessionHead)
 
+headerDict = dict()
+headerDict.update({'Address' : 'Stake'})
+with open('balances2.csv', 'w') as file:
+	w = csv.writer(file)
+	w.writerows(headerDict.items())
+	
 dataDict = dict()
 
 def getBalance(url, addressString, attempt):
@@ -60,10 +66,6 @@ responseAddresses = session.post(
 
 row = responseAddresses.json()['data']['AddressQuery']['rows']
 
-with open('balances2.csv', 'w') as file:
-	w = csv.writer(file)
-	w.writerows({"Address": "Balance"})
-
 counter = 0
 #lookup every address
 for address in row:
@@ -75,6 +77,7 @@ for address in row:
 			w = csv.writer(file)
 			w.writerows(dataDict.items())
 		print('Finished: ' + str(round((counter/count * 100) , 2)) +'%')
+		dataDict = dict()
 	counter += 1
 
 print('Finished: 100%')
