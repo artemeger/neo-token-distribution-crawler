@@ -1,3 +1,4 @@
+
 from requests import Session
 import time
 import sys
@@ -35,7 +36,7 @@ def getBalance(url, addressString, attempt):
 				getBalance(url, addressString, attempt + 1)
 			else:
 				print('Attempt limit reached. Will abort.')
-#et address count
+#get address count
 payloadCount = {'query':'{SystemQuery{rows {addressNum}}}'}
 responseCount = session.post(
 	url = urlString,
@@ -59,6 +60,10 @@ responseAddresses = session.post(
 
 row = responseAddresses.json()['data']['AddressQuery']['rows']
 
+with open('balances2.csv', 'w') as file:
+	w = csv.writer(file)
+	w.writerows({"Address": "Balance"})
+
 counter = 0
 #lookup every address
 for address in row:
@@ -66,12 +71,11 @@ for address in row:
 	addressUrl = 'https://api.neoscan.io/api/main_net/v1/get_balance/' + addressString
 	getBalance(addressUrl, addressString, 0)
 	if counter % 100 == 1:
+		with open('balances2.csv', 'a') as file:
+			w = csv.writer(file)
+			w.writerows(dataDict.items())
 		print('Finished: ' + str(round((counter/count * 100) , 2)) +'%')
 	counter += 1
-
-with open('balances2.csv', 'w') as file:
-	w = csv.writer(file)
-	w.writerows(dataDict.items())
 
 print('Finished: 100%')
 sys.exit()
