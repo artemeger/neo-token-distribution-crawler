@@ -8,4 +8,6 @@ After you have pip install the dependencies:
 
 Run the script with:
 
-> python3 crawler.py
+> python3 crawler.py || python3 crawlerV2.py
+
+crawlerV2 is the better updated version
